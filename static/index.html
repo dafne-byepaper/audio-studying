@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Audio Studying</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Audio Studying</h1>
+      <p class="subtitle">Turn any document into a podcast, or break it into chapters you can actually digest</p>
+    </header>
+
+    <nav class="tabs" role="tablist">
+      <button class="tab active" data-tool="audio" role="tab">🎧 Audio</button>
+      <button class="tab" data-tool="chapters" role="tab">📚 Chapters</button>
+    </nav>
+
+    <!-- IDLE STATE -->
+    <section id="state-idle" class="state active">
+      <p id="tool-description" class="tool-description"></p>
+
+      <form id="input-form">
+        <div class="segmented">
+          <button type="button" class="seg active" data-source="file">Upload file</button>
+          <button type="button" class="seg" data-source="text">Paste text</button>
+        </div>
+
+        <div id="drop-zone" class="drop-zone">
+          <div class="drop-icon">📄</div>
+          <p>Drag &amp; drop a PDF, TXT or Markdown file here</p>
+          <p class="or">— or —</p>
+          <label class="file-btn" for="file-input">Choose file</label>
+          <input type="file" id="file-input" accept=".pdf,.txt,.md,.markdown" hidden />
+          <p id="file-name" class="file-name"></p>
+        </div>
+
+        <textarea id="text-input" class="text-input hidden" rows="12"
+          placeholder="Paste the text you want to study…"></textarea>
+
+        <div id="chapter-options" class="options hidden">
+          <label>
+            Method
+            <select id="mode-select">
+              <option value="ai">AI (titles, summaries &amp; key points)</option>
+              <option value="simple">Simple (headings / even split, no API key)</option>
+            </select>
+          </label>
+          <label>
+            Max chapters
+            <input type="number" id="max-chapters" min="1" max="50" value="12" />
+          </label>
+        </div>
+
+        <button type="submit" id="generate-btn" class="primary-btn" disabled>Generate Podcast</button>
+      </form>
+      <p id="error-msg" class="error-msg hidden"></p>
+    </section>
+
+    <!-- LOADING STATE -->
+    <section id="state-loading" class="state">
+      <div class="spinner"></div>
+      <p id="step-label" class="step-label"></p>
+      <p id="loading-hint" class="loading-hint"></p>
+    </section>
+
+    <!-- AUDIO RESULT -->
+    <section id="state-audio" class="state">
+      <div class="audio-card">
+        <audio id="audio-player" controls preload="auto"></audio>
+        <a id="download-link" class="download-btn" download>Download MP3</a>
+      </div>
+      <div class="transcript-header">
+        <span>Transcript</span>
+        <button id="toggle-transcript" class="toggle-btn">Show</button>
+      </div>
+      <div id="transcript" class="transcript hidden"></div>
+      <button class="secondary-btn reset-btn">Start over</button>
+    </section>
+
+    <!-- CHAPTERS RESULT -->
+    <section id="state-chapters" class="state">
+      <div class="chapters-header">
+        <div>
+          <h2 id="doc-title"></h2>
+          <p id="doc-stats" class="doc-stats"></p>
+        </div>
+        <div class="export-btns">
+          <button id="export-md" class="toggle-btn">Markdown</button>
+          <button id="export-json" class="toggle-btn">JSON</button>
+        </div>
+      </div>
+      <p id="chapters-warning" class="warning hidden"></p>
+      <ol id="toc" class="toc"></ol>
+      <div id="chapter-list" class="chapter-list"></div>
+      <button class="secondary-btn reset-btn">Start over</button>
+    </section>
+  </div>
+
+  <template id="chapter-template">
+    <article class="chapter">
+      <div class="chapter-head">
+        <span class="chapter-num"></span>
+        <h3 class="chapter-title"></h3>
+        <span class="chapter-time"></span>
+      </div>
+      <p class="chapter-summary"></p>
+      <ul class="key-points"></ul>
+      <details>
+        <summary>Read full text</summary>
+        <div class="chapter-text"></div>
+      </details>
+      <div class="chapter-actions">
+        <button class="toggle-btn chapter-audio-btn">🎧 Create audio for this chapter</button>
+        <span class="chapter-status"></span>
+      </div>
+      <audio class="chapter-player hidden" controls preload="auto"></audio>
+    </article>
+  </template>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
